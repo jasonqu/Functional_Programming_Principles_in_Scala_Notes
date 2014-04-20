@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Nested functions</h2>
+					<p>对sqrt来说，sqrtIter, improve和isGoodEnough都是其内部函数，不需要被外界看到</p>
+					<p>可以使用内部嵌套函数的做法来实现，避免命名空间泛滥"name-space pollution"</p>
+				</section>
+
+				<section>
+					<h2>The sqrt Function, Take 2</h2>
+					<pre><code data-trim>
+  def sqrt(x: Double) = {
+    def sqrtIter(guess: Double, x: Double): Double =
+      if (isGoodEnough(guess, x)) guess
+      else sqrtIter(improve(guess, x), x)
+    def improve(guess: Double, x: Double) =
+      (guess + x / guess) / 2
+    def isGoodEnough(guess: Double, x: Double) =
+      Math.abs(guess * guess - x) < 0.001
+    sqrtIter(1.0, x)
+  }
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Blocks in Scala</h2>
+					<p>包含一系列表达式，最后一个表达式代表其(返回)值</p>
+					<p>block本身也是表达式，可以出现在任何表达式出现的地方</p>
+				</section>
+
+				<section>
+					<h2>Lexical Scoping refactor</h2>
+					<p>block本身有变量的表达范围，之前的方法可以重构：</p>
+					<pre><code data-trim>
+  def sqrt(x: Double) = {
+    def sqrtIter(guess: Double): Double =
+      if (isGoodEnough(guess)) guess
+      else sqrtIter(improve(guess))
+    def improve(guess: Double) =
+      (guess + x / guess) / 2
+    def isGoodEnough(guess: Double) =
+      Math.abs(guess * guess - x) < 0.001
+    sqrtIter(1.0)
+  } 
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Semicolons and infix operators</h2>
+					<p>scala中，;是可选的，简化代码，不过存在以下问题</p>
+					<pre><code data-trim>
+someLongExpression
++ someOtherExpression
+					</code></pre>
+					<p>会被理解为</p>
+					<pre><code data-trim>
+someLongExpression;
++ someOtherExpression
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Semicolons and infix operators</h2>
+					<p>解决方式：</p>
+					<pre><code data-trim>
+(someLongExpression
++ someOtherExpression)
+					</code></pre>
+					<p>或</p>
+					<pre><code data-trim>
+someLongExpression +
+someOtherExpression
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>周总结</h2>
+You have seen simple elements of functional programing in Scala.
+▶ arithmetic and boolean expressions
+▶ conditional expressions if-else
+▶ functions with recursion
+▶ nesting and lexical scope
+You have learned the difference between the call-by-name and
+call-by-value evaluation strategies.
+You have learned a way to reason about program execution: reduce
+expressions using the substitution model.
+This model will be an important tool for the coming sessions
+				</section>
+
+
+			</div>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

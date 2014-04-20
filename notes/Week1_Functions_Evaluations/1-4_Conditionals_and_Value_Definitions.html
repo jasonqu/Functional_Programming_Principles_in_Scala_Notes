@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Conditional Expressions</h2>
+					<p>和Java的if-else类似，但是不同于java用于指令(statement)，scala中用于表达式(expressions)</p>
+					<p>def abs(x: Int) = if (x >= 0) x else -x</p>
+				</section>
+
+				<section>
+					<h2>Boolean Expressions</h2>
+					<p>Question: 找到一个在 CBN 下终止，但在CBV下不终止的表达式.</p>
+					<ul>
+						<li>true false // Constants</li>
+						<li>!b         // Negation</li>
+						<li>b && b     // Conjunction</li>
+						<li>b || b     // Disjunction</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Rewrite rules for Booleans</h2>
+					<p>布尔表达式的推到规则</p>
+					<ul>
+						<li>!true --> false</li>
+						<li>!false --> true</li>
+						<li>true && e --> e</li>
+						<li>false && e --> false</li>
+						<li>true || e --> true</li>
+						<li>false || e --> e</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Exercise</h2>
+					<p>用scala函数实现如下功能(实现中不要使用 || 和 &&):</p>
+					<ul>
+						<li>and(x, y) == x && y</li>
+						<li>or(x, y) == x || y</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Value Definitions</h2>
+					<p>之前看到函数定义中存在“按值”和“按名”的区别，在变量定义中也有相同的区别</p>
+					<p>val是by value, 而def是by name</p>
+					<p>对val，是在定义时取值，如</p>
+					<ul>
+						<li>val x = 2</li>
+						<li>val y = square(x)</li>
+					</ul>
+					<p>y在定义时取值，为4</p>
+				</section>
+
+				<section>
+					<h2>Value Definitions and Termination</h2>
+					<p>查看这两种方式的不同：</p>
+					<p>def loop: Boolean = loop</p>
+					<ul>
+						<li>def x = loop 是可以的</li>
+						<li>val x = loop 则会陷入死循环</li>
+					</ul>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
