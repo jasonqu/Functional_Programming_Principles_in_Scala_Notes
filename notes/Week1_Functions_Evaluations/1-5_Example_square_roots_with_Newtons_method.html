@@ -4,10 +4,11 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>牛顿法开方 Example square roots with Newton's method</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Example square roots with Newton's method(牛顿法开方) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -113,7 +114,8 @@ def sqrtIter(guess: Double, x: Double): Double =
 					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
 				]
 			});
 

@@ -4,10 +4,11 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>代码块与词法作用域 Blocks and Lexical Scope</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Blocks and Lexical Scope(代码块与词法作用域) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -66,8 +67,19 @@
 
 				<section>
 					<h2>Blocks in Scala</h2>
-					<p>包含一系列表达式，最后一个表达式代表其(返回)值</p>
-					<p>block本身也是表达式，可以出现在任何表达式出现的地方</p>
+					<ul>
+						<li>包含一系列表达式，最后一个表达式代表其(返回)值</li>
+						<li>block本身也是表达式，可以出现在任何表达式出现的地方</li>
+						<li>block中定义只在本vlock中有效，且覆盖块外同名变量</li>
+					</ul>
+					<pre><code data-trim>
+val x = 0
+def f(y: Int) = y + 1
+val result = {
+  val x = f(3)
+  x * x
+}
+					</code></pre>
 				</section>
 
 				<section>
@@ -89,7 +101,7 @@
 
 				<section>
 					<h2>Semicolons and infix operators</h2>
-					<p>scala中，;是可选的，简化代码，不过存在以下问题</p>
+					<p>scala中';'是可选的，简化代码，不过存在以下问题</p>
 					<pre><code data-trim>
 someLongExpression
 + someOtherExpression
@@ -114,21 +126,6 @@ someLongExpression +
 someOtherExpression
 					</code></pre>
 				</section>
-
-				<section>
-					<h2>周总结</h2>
-You have seen simple elements of functional programing in Scala.
-▶ arithmetic and boolean expressions
-▶ conditional expressions if-else
-▶ functions with recursion
-▶ nesting and lexical scope
-You have learned the difference between the call-by-name and
-call-by-value evaluation strategies.
-You have learned a way to reason about program execution: reduce
-expressions using the substitution model.
-This model will be an important tool for the coming sessions
-				</section>
-
 
 			</div>
 
@@ -161,7 +158,8 @@ This model will be an important tool for the coming sessions
 					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
 				]
 			});
 

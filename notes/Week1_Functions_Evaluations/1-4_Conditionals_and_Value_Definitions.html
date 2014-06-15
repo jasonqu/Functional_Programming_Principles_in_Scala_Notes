@@ -4,10 +4,11 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>条件与值定义 Conditionals and Value Definitions</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Conditionals and Value Definitions(条件与值定义) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -50,7 +51,6 @@
 
 				<section>
 					<h2>Boolean Expressions</h2>
-					<p>Question: 找到一个在 CBN 下终止，但在CBV下不终止的表达式.</p>
 					<ul>
 						<li>true false // Constants</li>
 						<li>!b         // Negation</li>
@@ -61,7 +61,7 @@
 
 				<section>
 					<h2>Rewrite rules for Booleans</h2>
-					<p>布尔表达式的推到规则</p>
+					<p>布尔表达式的推导规则</p>
 					<ul>
 						<li>!true --> false</li>
 						<li>!false --> true</li>
@@ -83,7 +83,7 @@
 
 				<section>
 					<h2>Value Definitions</h2>
-					<p>之前看到函数定义中存在“按值”和“按名”的区别，在变量定义中也有相同的区别</p>
+					<p>之前看到函数参数定义中存在“按值”和“按名”的区别，在程序变量定义中也有相同的区别</p>
 					<p>val是by value, 而def是by name</p>
 					<p>对val，是在定义时取值，如</p>
 					<ul>
@@ -134,7 +134,8 @@
 					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
 				]
 			});
 

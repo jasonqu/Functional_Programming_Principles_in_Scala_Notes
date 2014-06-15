@@ -4,10 +4,11 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>取值策略与可终止性 Evaluation Strategies and Termination</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Evaluation Strategies and Termination(取值策略与可终止性) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -45,7 +46,7 @@
 				<section>
 					<h2>Call-by-name, Call-by-value and termination</h2>
 					<p>从前面的介绍已经知道，如果推导可以终止的话，按名推导和按值推导的结果是一样的</p>
-					<p>但是如果推倒不一定能终止呢？</p>
+					<p>但是如果推导不一定能终止呢？</p>
 					<ul>
 						<li>如果CBV终止，则CBN必然终止</li>
 						<li>反之不然</li>
@@ -99,7 +100,8 @@
 					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
 				]
 			});
 
