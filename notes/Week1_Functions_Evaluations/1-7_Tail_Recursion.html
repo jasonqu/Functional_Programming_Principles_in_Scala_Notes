@@ -4,10 +4,11 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>尾递归 Tail Recursion</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Tail Recursion(尾递归) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -43,29 +44,58 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h2>Evaluating a Function Application</h2>
-					<p>Application Rewriting Rule</p>
+					<h2>Application Rewriting Rule</h2>
+					$def f(x_1, ..., x_n) = B; ... f(v_1, ..., v_n)$
+					$->$
+					$def f(x_1, ..., x_n) = B; ... [v_1/x_1, ..., v_n/x_n] B$
+					<p>这里表示<code>B</code>中所有的变量，被值替换</p>
 					<p>This can be formalized as a rewriting of the program itself called substitution</p>
 				</section>
 
 				<section>
-					<h2>Rewriting example</h2>
-					<p>gcd, the function that computes the greatest common divisor of two numbers by using Euclid’s algorithm.</p>
-					<pre><code data-trim>
-def gcd(a: Int, b: Int): Int =
-  if (b == 0) a else gcd(b, a % b)
-					</code></pre>
-					<p>factorial</p>
-					<pre><code data-trim>
-def factorial(n: Int): Int =
-  if (n == 0) 1 else n * factorial(n - 1)
-					</code></pre>
-					<p>两种方法的区别是什么？</p>
+					<section>
+						<h2>Rewriting example</h2>
+						<p>gcd, the function that computes the greatest common divisor of two numbers by using Euclid’s algorithm.</p>
+						<pre><code>
+	def gcd(a: Int, b: Int): Int =
+	  if (b == 0) a else gcd(b, a % b)
+						</code></pre>
+						<ol>
+							<li>gcd(14, 21)</li>
+							<li class="fragment">if (21 == 0) 14 else gcd(21, 14 % 21)</li>
+							<li class="fragment">if (false) 14 else gcd(21, 14 % 21)</li>
+							<li class="fragment">gcd(21, 14 % 21)</li>
+							<li class="fragment">gcd(21, 14)</li>
+							<li class="fragment">if (14 == 0) 21 else gcd(14, 21 % 14)</li>
+							<li class="fragment">gcd(7, 0)</li>
+							<li class="fragment">if (0 == 0) 7 else gcd(0, 7 % 0)</li>
+							<li class="fragment">7</li>
+						</ol>
+					</section>
+
+					<section>
+						<h2>Rewriting example</h2>
+						<p>factorial</p>
+						<pre><code data-trim>
+	def factorial(n: Int): Int =
+	  if (n == 0) 1 else n * factorial(n - 1)
+						</code></pre>
+						<ol>
+							<li>factorial(4)</li>
+							<li>if (4 == 0) 1 else 4 * factorial(4 - 1)</li>
+							<li>4 * factorial(3)</li>
+							<li>4 * (3 * factorial(2))</li>
+							<li>4 * (3 * (2 * factorial(1)))</li>
+							<li>4 * (3 * (2 * (1 * factorial(0)))</li>
+							<li>4 * (3 * (2 * (1 * 1)))</li>
+							<li>120</li>
+						</ol>
+						<p>两种替换过程的区别是什么？</p>
+					</section>
 				</section>
 
 				<section>
 					<h2>Tail Recursion</h2>
-					<p>Implementation Consideration: If a function calls itself as its last action, the function’s stack frame can be reused. This is called tail recursion.</p>
 					<p>实现考虑：如果一个函数最后一个表达式是调用该函数本身，则函数的栈帧可被复用，称之尾递归.</p>
 					<p>Tail recursive functions are iterative processes.</p>
 					<p>In general, if the last action of a function consists of calling a function (which may be the same), one stack frame would be sufficient for both functions. Such calls are called tail-calls.</p>
@@ -84,14 +114,7 @@ def gcd(a: Int, b: Int): Int = ...
 				<section>
 					<h2>Exercise: Tail recursion</h2>
 					<p>Design a tail recursive version of factorial.</p>
-					<pre><code data-trim>
-					</code></pre>
-				</section>
-
-				<section>
-					<h2>Exercise: Tail recursion</h2>
-					<p>Design a tail recursive version of factorial.</p>
-					<pre><code data-trim>
+					<pre class="fragment"><code data-trim>
   def factorial(n: Int): Int = {
     @tailrec
     def factIter(acc: Int, x: Int): Int = {
@@ -135,7 +158,8 @@ def gcd(a: Int, b: Int): Int = ...
 					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
 				]
 			});
 

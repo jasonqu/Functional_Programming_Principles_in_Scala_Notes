@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>柯里化 Currying</title>
+
+		<meta name="description" content="Currying(柯里化) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Motivation</h2>
+					<p>看之前的求和代码</p>
+					<pre><code data-trim>
+def sumInts(a: Int, b: Int) = sum(x => x, a, b)
+def sumCubes(a: Int, b: Int) = sum(x => x * x * x, a, b)
+def sumFactorials(a: Int, b: Int) = sum(fact, a, b)
+					</code></pre>
+					<p>注意到参数a、b不变的传给了sum，能不能去掉这些参数，进一步简化呢？</p>
+				</section>
+
+				<section>
+					<h2>Functions Returning Functions</h2>
+					<p>首先重写函数</p>
+					<pre><code data-trim>
+def sum(f: Int => Int): (Int, Int) => Int = {
+  def sumF(a: Int, b: Int): Int =
+    if (a > b) 0
+    else f(a) + sumF(a + 1, b)
+  sumF
+}
+					</code></pre>
+					<p>sum 现在的返回值是一个函数</p>
+					<p>The returned function sumF applies the given function parameter f
+and sums the results.</p>
+				</section>
+
+				<section>
+					<h2>Stepwise Applications</h2>
+					<p>我们现在可以这样简写函数：</p>
+					<pre><code data-trim>
+def sumInts = sum(x => x)
+def sumCubes = sum(x => x * x * x)
+def sumFactorials = sum(fact)
+
+sumCubes(1, 10) + sumFactorials(10, 20)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Consecutive Stepwise Applications</h2>
+					<p>我们甚至可以利用匿名函数的特性，不用再定义函数名称了：</p>
+					<pre><code data-trim>
+sum (cube) (1, 10)
+					</code></pre>
+					<ul>
+						<li class="fragment">sum(cube) applies sum to cube and returns the sum of cubes function.</li>
+						<li class="fragment">sum(cube) is therefore equivalent to sumCubes.</li>
+						<li class="fragment">This function is next applied to the arguments (1, 10).</li>
+					</ul>
+					<p class="fragment">Generally, function application associates to the left:</p>
+					<p class="fragment">sum(cube)(1, 10) == (sum (cube)) (1, 10)</p>
+				</section>
+
+				<section>
+					<h2>Multiple Parameter Lists</h2>
+					<p>由于返回函数的函数，这样的写法非常常见，所以scala提供了一种多参数列表的方式，来表达相同的语法.</p>
+					<p>例如，前面的函数可以这样重写：</p>
+					<pre><code data-trim>
+def sum(f: Int => Int)(a: Int, b: Int): Int =
+	if (a > b) 0 else f(a) + sum(f)(a + 1, b)
+					</code></pre>
+				</section>
+
+				<section>
+					<section>
+						<h2>Expansion of Multiple Parameter Lists</h2>
+						<p>In general, a definition of a function with multiple parameter lists</p>
+						$def f(args_1)...(args_n) = E$
+						<p>where n > 1, is equivalent to</p>
+						$def f(args_1)...(argsn_(n-1)) = {def g(args_n) = E; g}$
+						<p>where g is a fresh identifier. Or for short:</p>
+						$def f(args_1)...(args_(n-1)) = ((args_n) => E)$
+					</section>
+	
+					<section>
+						<h2>Expansion of Multiple Parameter Lists</h2>
+						<p>By repeating the process n times</p>
+						$def f(args_1)...(args_n) = E$
+						<p>is shown to be equivalent to</p>
+						$def f = (args_1 => (args_2 => ... (args_n) => E)...))$
+						
+						<p>This style of definition and function application is called currying,
+named for its instigator, Haskell Brooks Curry (1900-1982), a
+twentieth century logician.</p>
+						<p>In fact, the idea goes back even further to Schönfinkel and Frege</p>
+					</section>
+				</section>
+
+				<section>
+					<h2>More Function Types</h2>
+					<p>Q:sum的类型是什么？</p>
+					<pre><code data-trim>
+def sum(f: Int => Int)(a: Int, b: Int): Int = ...
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>More Function Types</h2>
+					<p>Q:sum的类型是什么？</p>
+					<pre><code data-trim>
+def sum(f: Int => Int)(a: Int, b: Int): Int = ...
+					</code></pre>
+					<p>A: (Int => Int) => (Int, Int) => Int </p>
+					<p>Note that functional types associate to the right. That is to say that</p>
+					<p>Int => Int => Int 等价于 Int => (Int => Int)</p>
+				</section>
+
+				<section>
+					<h2>Exercise</h2>
+					<p>The sum function uses linear recursion. Write a tail-recursive version
+by replacing the ???s.</p>
+					<pre><code data-trim>
+def sum(f: Int => Int)(a: Int, b: Int): Int = {
+  def loop(a: Int, acc: Int): Int = {
+    if (???) ???
+    else loop(???, ???)
+  }
+  loop(???, ???)
+}
+					</code></pre>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

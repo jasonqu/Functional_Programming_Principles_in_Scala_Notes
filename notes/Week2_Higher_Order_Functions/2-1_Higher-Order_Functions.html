@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>高阶函数 Higher-Order Functions</title>
+
+		<meta name="description" content="Higher-Order Functions(高阶函数) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Higher-Order Functions</h2>
+					<p>函数式语言视函数为一等公民</p>
+					<p>所以函数可以被当做值一样作为参数，或称为返回值</p>
+					<p>这种机制提供了灵活地组织程序的方式</p>
+					<p>使用其它函数为参数或返回值的，称之为高阶函数</p>
+				</section>
+
+				<section>
+					<h2>Example</h2>
+					<p>对[a b]区间求和</p>
+					<pre><code data-trim>
+if (a > b) 0 else a + sumInts(a + 1, b)
+					</code></pre>
+					<p>对[a b]区间求立方和</p>
+					<pre><code data-trim>
+def cube(x: Int): Int = x * x * x
+if (a > b) 0 else cube(a) + sumInts(a + 1, b)
+					</code></pre>
+					<p>对[a b]区间求factorial和</p>
+					<pre><code data-trim>
+if (a > b) 0 else factorial(a) + sumInts(a + 1, b)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Example</h2>
+					<p>他们其实可以抽象为一种模式：</p>
+					$\sum_{n=a}^b f(n)$
+					<p>我们可以用程序抽象出这种模式吗？</p>
+				</section>
+
+				<section>
+					<h2>Summing with Higher-Order Functions</h2>
+					<p>答案是可以：</p>
+					<pre><code data-trim>
+def sum(f: Int => Int, a: Int, b: Int): Int =
+	if (a > b) 0
+	else f(a) + sum(f, a + 1, b)
+	
+def sumInts(a: Int, b: Int) = sum(id, a, b)
+def sumCubes(a: Int, b: Int) = sum(cube, a, b)
+def sumFactorials(a: Int, b: Int) = sum(fact, a, b)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Function Types</h2>
+					<p>The type A => B is the type of a function that takes an argument of
+type A and returns a result of type B.</p>
+					<p>所以Int => Int 表示输入为Int，输出为Int的函数</p>
+				</section>
+
+				<section>
+					<h2>Anonymous Functions</h2>
+					<p>有时为所有的函数都提供一个def声明是很麻烦的，可以使用匿名函数来简化：</p>
+					<p>就像对字符串的使用不需要额外定义一样</p>
+					<pre><code data-trim>
+def str = ”abc”; println(str)
+println(”abc”)
+					</code></pre>
+					<p>函数也可以简写为：</p>
+					<pre><code data-trim>
+(x: Int) => x * x * x
+(x: Int, y: Int) => x + y
+					</code></pre>
+					<p>The type of the parameter can be omitted if it can be inferred
+by the compiler from the context.</p>
+				</section>
+
+				<section>
+					<h2>Anonymous Functions</h2>
+					<p>匿名函数实际是语法糖。</p>
+					$(x_1:T_1, ... ,x_n:T_n) => E$ 等价于
+					${def f(x_1:T_1, ... ,x_n:T_n) = E; f}$
+					<pre><code data-trim>
+def sumInts(a: Int, b: Int) = sum(x => x, a, b)
+def sumCubes(a: Int, b: Int) = sum(x => x * x * x, a, b)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Exercise</h2>
+					<ol>
+					<li>Write a product function that calculates the product of the
+values of a function for the points on a given interval.</li>
+<li>Write factorial in terms of product.</li>
+<li>Can you write a more general function, which generalizes both
+sum and product?</li>
+					</ol>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

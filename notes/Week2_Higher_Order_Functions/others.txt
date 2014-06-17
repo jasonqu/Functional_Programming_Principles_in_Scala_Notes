@@ -1,0 +1,7 @@
+Lecture 2.3 - Example: Finding Fixed Points
+
+寻找不动点的一个例子
+
+Lecture 2.4 - Scala Syntax Summary (4:13)
+
+5页简短的scala语法说明
