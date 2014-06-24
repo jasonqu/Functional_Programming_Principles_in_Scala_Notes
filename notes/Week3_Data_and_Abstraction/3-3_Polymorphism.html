@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>多态 Polymorphism</title>
+
+		<meta name="description" content="Polymorphism(多态) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Cons-Lists</h2>
+					<p>不可变的链表(immutable linked list)是很多函数式语言的基础数据结构</p>
+					<p>它有两个组成部分：</p>
+					<ul>
+						<li>Nil 空列表</li>
+						<li>Cons 包含一个元素和列表尾指针的单元</li>
+					</ul>
+					<pre><code data-trim>
+List(1, 2, 3)
+List(List(true, false), List(3))
+					</code></pre>
+				</section>
+
+				<section>
+				<section>
+					<h2>Cons-Lists in scala</h2>
+					<p>这里定义一个int列表的数据结构框架：</p>
+					<pre><code data-trim>
+trait IntList ...
+class Nil extends IntList ...
+class Cons(val head : Int, val tail : IntList) extends IntList ...
+					</code></pre>
+					<p>一个list对象，只能是如下情况：</p>
+					<ul>
+						<li>new Nil 空列表</li>
+						<li>new Cons(x, xs) 包含一个元素x和尾列表xs</li>
+					</ul>
+				</section>
+				
+				<section>
+					<h2>Value Parameters</h2>
+					<p>注意Cons的定义</p>
+					<p>(val head : Int, val tail : IntList)等价于定义了类的字段：</p>
+					<pre><code data-trim>
+class Cons(_head : Int, _tail : IntList) extends IntList {
+  val head = _head
+  val tail = _tail
+}
+					</code></pre>
+				</section>
+				</section>
+
+				<section>
+					<h2>Type Parameter</h2>
+					<p>只定义int列表太局限了，可以使用类型参数达到类似java中泛型的效果</p>
+					<pre><code data-trim>
+trait List[T] ...
+class Nil[T] extends List[T] ...
+class Cons[T](val head : T, val tail : List[T]) extends List[T] ...
+					</code></pre>
+				</section>
+				
+				<section>
+				<section>
+					<h2>Complete Definition of List</h2>
+					<pre><code data-trim>
+trait List[T] {
+  def isEmpty : Boolean
+  def head : T
+  def tail : List[T]
+}
+
+class Nil[T] extends List[T] {
+  def isEmpty = true
+  def head = throw new NoSuchElementException("Nil.head")
+  def tail = throw new NoSuchElementException("Nil.tail")
+}
+class Cons[T](val head : T, val tail : List[T]) extends List[T] {
+  def isEmpty = false
+}
+					</code></pre>
+				</section>
+				
+				<section>
+					<h2>Generic Functions</h2>
+					<p>和类一样，函数也可以由类型参数</p>
+					<p>例如创建拥有单个元素的列表的方法</p>
+					<pre><code data-trim>
+def singleton[T](elem : T) = new Cons[T](elem, new Nil[T])
+
+singleton[Int](1)
+singleton[Boolean](true)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Type Inference</h2>
+					<p>由于scala的编译器能够推断出函数的参数类型</p>
+					<p>所以一般地，类型参数可以省略：</p>
+					<pre><code data-trim>
+singleton(1)
+singleton(true)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Type and Evaluation</h2>
+					<p>类型参数不影响scala的取值(Evaluation)</p>
+					<p>我们可以认为，在对程序取值前，所有的类型参数都被抹去了(type erasure)</p>
+					<p>java、scala、haskell、ML、Ocaml 都是这样</p>
+					<p>C++ C# F# 则在运行时保留了类型参数</p>
+				</section>
+
+				</section>
+
+				<section>
+					<h2>Polymorphism</h2>
+					<p>多态的含义是一个函数类型可以在编程时有不同的形态：</p>
+					<ul>
+						<li>函数可以应用在多个类型参数上</li>
+						<li>类型可以代表多个类型的实例</li>
+					</ul>
+					<p>我们已经见过它的两个主要形式：</p>
+					<ul>
+						<li>subtyping:子类型的实例可以作为基类(base class)的参数传入</li>
+						<li>generics: 函数或类的实例根据参数化类型创建</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Exercise</h2>
+					<p>写一个函数，参数是int n和一个list，返回list第n个元素</p>
+					<p>元素以0开始；超出范围跑出IndexOutOfBoundException</p>
+				</section>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
