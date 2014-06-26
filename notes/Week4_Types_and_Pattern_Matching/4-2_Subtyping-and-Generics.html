@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>子类型和泛型 Subtyping and Generics</title>
+
+		<meta name="description" content="Subtyping and Generics(子类型和泛型) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Polymorphism</h2>
+					<p>我们已经见过多态的两个主要形式：</p>
+					<ul>
+						<li>subtyping:子类型的实例可以作为基类(base class)的参数传入</li>
+						<li>generics :函数或类的实例根据参数化类型创建</li>
+					</ul>
+					<p>这一节将讨论一下他们的交互，也有两个主要形式：</p>
+					<ul>
+						<li>bounds</li>
+						<li>variance</li>
+					</ul>
+				</section>
+
+				<section>
+				<section>
+					<h2>Type Bounds</h2>
+					<p>假设有一个方法assertAllPos：</p>
+					<ul>
+						<li>参数是IntSet</li>
+						<li>如果IntSet的元素都是正的，返回这个IntSet</li>
+						<li>否则抛出一个异常</li>
+					</ul>
+					<p>assertAllPos应该是什么类型呢？</p>
+					<p class="fragment"><code>def assertAllPos(s: IntSet): IntSet </code></p>
+					<p class="fragment">这个描述可以，但是能不能更精确呢？</p>
+				</section>
+				
+				<section>
+					<h2>Type Bounds</h2>
+					<p>也许会希望，输入是Empty的返回也是Empty；输入是NonEmpty的返回也是NonEmpty：</p>
+					<pre><code data-trim>
+def assertAllPos[S <: IntSet](r: S): S = ...
+					</code></pre>
+					<p>这里<pre><: IntSet</pre>就是类型参数S的上界</p>
+					<p>即S是IntSet的子类，S符合(conform) IntSet的类定义</p>
+					<ul>
+						<li>S &lt;: T means: S is a subtype of T</li>
+						<li>S &gt;: T means: S is a supertype of T, or T is a subtype of S.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Lower Bounds</h2>
+					<p>也可以定义类型的下界：</p>
+					<pre><code data-trim>
+[S >: NonEmpty]
+					</code></pre>
+					<p>表示类型参数S只能是NonEmpty的基类</p>
+					<p>即S是NonEmpty, IntSet, AnyRef, or Any.</p>
+				</section>
+				
+				<section>
+					<h2>Mixed Bounds</h2>
+					<p>当然也可以同时定义类型的上下界：</p>
+					<pre><code data-trim>
+[S >: NonEmpty <: IntSet]
+					</code></pre>
+				</section>
+				</section>
+
+
+				<section>
+				<section>
+					<h2>Covariance</h2>
+					<p>还有一个需要考虑的类型参数(type parameter)和子类型(subtyping)的交互</p>
+					<p>假设</p>
+					<pre><code data-trim>
+NonEmpty <: IntSet
+					</code></pre>
+					<p>那有没有这个的关系成立呢？</p>
+					<pre><code data-trim>
+List[NonEmpty] <: List[IntSet] ?
+					</code></pre>
+					<p class="fragment">直观地讲，这是可以成立的，我们应该可以将NonEmpty集 作为 IntSet集传递</p>
+					<p class="fragment">对这类关系我们称为协变(covariant)，因为其子类型关系随着类型参数的变化而变化</p>
+				</section>
+				
+				<section>
+					<h2>Arrays</h2>
+					<p>协变可以用在所有类型上吗？还是只能用在List上？</p>
+					<p>作为对比我们看一下java的Array，先看下备忘：</p>
+					<ul>
+						<li>T[]表示java中的数组</li>
+						<li>scala中使用类型参数Array[T]来达到相同效果</li>
+					</ul>
+					<p>java中array是协变的，所以有</p>
+					<pre><code data-trim>
+NonEmpty[] <: IntSet[]
+					</code></pre>
+				</section>
+				
+				<section>
+					<h2>Array Typing Problem</h2>
+					<p>但是协变Array类型会引起问题</p>
+					<pre><code data-trim>
+NonEmpty[] a = new NonEmpty[]{ new NonEmpty (1 , Empty , Empty )}
+IntSet[] b = a
+b[0] = Empty
+NonEmptys = a[0]
+					</code></pre>
+					<p>上面的代码将会抛出ArrayStoreException</p>
+					<p>因为我们试图将一个Empty放入一个NonEmpty的数组，哪里出问题了？</p>
+				</section>
+
+				<section>
+					<h2>The Liskov Substitution Principle</h2>
+					<p>Barbara Liskov 说明了什么情况下，一个类型可以作为另一个类型的子类型</p>
+					<blockquote>If A <: B, then everything one can to do with a value of
+type B one should also be able to do with a value of type A.</<blockquote>
+					<p>实际的Liskov定义更加形式化：</p>
+					<blockquote>Let q(x) be a property provable about objects x of type B.
+Then q(y) should be provable for objects y of type A where A <: B.</<blockquote>
+				</section>
+				</section>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>变性 Variance</title>
+
+		<meta name="description" content="Variance(变性) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+				<section>
+					<h2>Variance</h2>
+					<p>我们已经见过有的类型可以协变，有的不行</p>
+					<p>粗略的讲，可变对象不是协变的，而满足一定条件的不可变集合可以是协变的</p>
+				</section>
+
+				<section>
+					<h2>Definition of Variance</h2>
+					<table>
+						<tbody><tr>
+							<td></td>
+							<td><strong>含义</strong></td>
+							<td> <strong>Scala 标记</strong></td>
+						</tr>
+						<tr>
+							<td><strong>协变covariant</strong></td>
+							<td>C[T’]是 C[T] 的子类   </td>
+							<td> [+T]</td>
+						</tr>
+						<tr>
+							<td><strong>逆变contravariant</strong></td>
+							<td>C[T] 是 C[T’]的子类   </td>
+							<td> [-T]</td>
+						</tr>
+						<tr>
+							<td><strong>不变invariant</strong></td>
+							<td>C[T] 和 C[T’]无关     </td>
+							<td> [T]</td>
+						</tr>
+					</tbody></table>
+				</section>
+
+				<section>
+					<h2>Exercise</h2>
+					<p>假设有两个函数类型：</p>
+					<pre><code data-trim>
+type A = IntSet => NonEmpty
+type B = NonEmpty => IntSet
+					</code></pre>
+					<p>根据Liskov原理，A和B有什么关系？协变、逆变、无关？</p>
+					<p class="fragment"><code>A <: B</code></p>
+				</section>
+				</section>
+				
+				<section>
+					<h2>Typing Rules for Functions</h2>
+					<p>对函数类型有如下定理：</p>
+					<pre><code data-trim>
+if A1 <: A2 and B1 <: B2 then
+A1 => B1 <: A2 => B2
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Function Traits Declaration</h2>
+					<p>所以函数对参数逆变，对结果协变：</p>
+					<pre><code data-trim>
+trait Function1 [-T, +R] extends AnyRef {
+  def apply(x: T): U
+}
+					</code></pre>
+				</section>
+				
+				<section>
+					<h2>Variance Checks</h2>
+					<p>略</p>
+				</section>
+
+				<section>
+				<section>
+					<h2>Variance and Lists</h2>
+					<p>对List，我们可以把Nil定义为一个Object 吗？毕竟只有一个空列表</p>
+					<p class="fragment">我们可以把List变为协变的</p>
+					<pre class="fragment"><code data-trim>
+trait List[+T] {...}
+object Empty extends List[]Nothing] {...}
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Making Classes Covariant</h2>
+					<p>有时为了使类协变还需要一些工作</p>
+					<p>假设我们为List提供一个方法，在头处添加一个元素，返回一个新list：</p>
+					<pre><code data-trim>
+trait List[+T] {
+  def prepend(elem: T): List[T] = new Cons(elem, this)
+}
+					</code></pre>
+					<p class="fragment">但是这个代码有问题，编译器会直接报错，因为它违反了Liskov的定理</p>
+					<p class="fragment">对List[NonEmpty] xs 执行 xs.prepend(Empty).</p>
+				</section>
+				
+				<section>
+					<h2>Lower Bounds</h2>
+					<p>怎样让prepend可行？</p>
+					<p class="fragment">我们可以使用 下界</p>
+					<pre class="fragment"><code data-trim>
+def prepend [U >: T] (elem: U): List[U] = new Cons(elem, this)
+					</code></pre>
+					<p class="fragment">它能够通过变性检查，因为：</p>
+					<ul>
+						<li class="fragment">协变类型参数 可以作为 方法类型参数的 下界</li>
+						<li class="fragment">逆变类型参数 可以作为 方法返回值的 上界</li>
+					</ul>
+				</section>
+				
+				<section>
+					<h2>Exercise</h2>
+					<p>这个函数的返回值类型是？</p>
+					<pre><code data-trim>
+def f(xs: List[NonEmpty], x: Empty) = xs prepend x ?
+					</code></pre>
+					<p class="fragment">List[IntSet]</p>
+				</section>
+
+				</section>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
