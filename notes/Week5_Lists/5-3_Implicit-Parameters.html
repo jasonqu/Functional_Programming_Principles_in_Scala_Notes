@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>隐式参数 Implicit Parameters</title>
+
+		<meta name="description" content="Implicit Parameters(隐式参数) in Functional Programming Principles in Scala(Scala函数式编程原理)">
+		<meta name="author" content="Martin Odersky">
+		<meta name="translator" content="jasonqu">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../css/reveal.min.css">
+		<link rel="stylesheet" href="../../css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../../css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+				<section>
+					<h2>Making Sort more General</h2>
+					<p>对之前介绍的msort函数，我们可以不局限与Int类型吗？</p>
+					<pre><code data-trim>
+def msort[T](xs: List[T]): List[T] = ...
+					</code></pre>
+					<p>直接这样是不行的，因为任意类型T不一定拥有方法 &lt;</p>
+					<p>思路是：为merge方法提供一个 比较函数(comparison function)的参数</p>
+				</section>
+
+				<section>
+					<h2>Parameterization of Sort</h2>
+					<p>直观的做法就是将比减函数作为新的参数传入：</p>
+					<pre><code data-trim>
+def msort[T](xs: List[T])(lt: (T, T) => Boolean) = {
+  ...
+  merge(msort(fst)(lt), msort(snd)(lt))
+}
+
+def merge(xs: List[T], ys: List[T]) = (xs, ys) match {
+  ...
+  case (x :: xs1, y :: ys1) =>
+    if (lt(x, y)) ...
+    else ...
+}
+
+val xs = List(-5, 6, 3, 2, 7)
+val fruit = List(”apple”, ”pear”, ”orange”, ”pineapple”)
+merge(xs)((x: Int, y: Int) => x < y)
+merge(fruit)((x: String, y: String) => x.compareTo(y) < 0)
+					</code></pre>
+				</section>
+				
+				<section>
+					<h2>Parametrization with Ordered</h2>
+					<p>对于比较 scala已经提供了一些默认实现<code>scala.math.Ordering[T]</code></p>
+					<p>所以函数声明可以这样变化：</p>
+					<pre><code data-trim>
+def msort[T](xs: List[T])(ord: Ordering) =
+  def merge(xs: List[T], ys: List[T]) =
+    ... if (ord.lt(x, y)) ...
+  ... merge(msort(fst)(ord), msort(snd)(ord)) ...
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Ordered Instances</h2>
+					<p>调用代码也要做相应的变化：</p>
+					<pre><code data-trim>
+import math.Ordering
+msort(nums)(Ordering.Int)
+msort(fruits)(Ordering.String)
+					</code></pre>
+				</section>
+				</section>
+
+				<section>
+				<section>
+					<h2>Aside: Implicit Parameters</h2>
+					<p>但是总需要传入Ordering参数也显得有些多余</p>
+					<p>可以使用implicit来定义参数为隐式参数：</p>
+					<pre><code data-trim>
+def msort[T](xs: List[T])(implicit ord: Ordering) =
+  def merge(xs: List[T], ys: List[T]) =
+    ... if (ord.lt(x, y)) ...
+  ... merge(msort(fst), msort(snd)) ...
+  
+  msort(nums)
+  msort(fruits)
+					</code></pre>
+					<p>编译器会根据需要的类型来提供合适的值来填入隐式参数中</p>
+				</section>
+
+				<section>
+					<h2>Rules for Implicit Parameters</h2>
+					<p>那编译器在什么情况下会查找隐式定义呢？</p>
+					<ul>
+						<li>is marked implicit</li>
+						<li>has a type compatible with T</li>
+						<li>is visible at the point of the function call, or is defined in a
+companion object associated with T.</li>
+					</ul>
+					<p>如果按照上面的规则找不到合适的隐式定义，则报错</p>
+				</section>
+				</section>
+
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../../plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

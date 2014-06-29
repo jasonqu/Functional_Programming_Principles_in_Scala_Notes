@@ -1,7 +1,7 @@
 Lecture 2.3 - Example: Finding Fixed Points
 
-Ñ°ÕÒ²»¶¯µãµÄÒ»¸öÀı×Ó
+å¯»æ‰¾ä¸åŠ¨ç‚¹çš„ä¸€ä¸ªä¾‹å­
 
 Lecture 2.4 - Scala Syntax Summary (4:13)
 
-5Ò³¼ò¶ÌµÄscalaÓï·¨ËµÃ÷
+5é¡µç®€çŸ­çš„scalaè¯­æ³•è¯´æ˜
