@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>scala 函数式编程</title>
+
+		<meta name="description" content="scala 函数式编程">
+		<meta name="translator" content="jasonqu">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-background="img/blackboard.jpg">
+					<h2>编程范式</h2>
+					<h3>Programming Paradigms</h3>
+					<p>
+						主流编程范式<small>范式：描述截然不同的概念或思维模式。</small>
+					</p>
+					<ul>
+						<li>命令式 imperative programming</li>
+						<li>函数式 functional programming </li>
+						<li>逻辑式 logic programming </li>
+					</ul>
+					<br/>
+					<p>
+						面向对象(object-oriented)正交于以上范式，即每一个范式都能使用面向对象思想。
+					</p>
+				</section>
+
+				<section data-background="img/blackboard.jpg">
+					<h2>命令式编程</h2>
+					<h3>Imperative programming</h3>
+					<p>命令式编程方式：</p>
+					<ul>
+						<li>修改可变变量</li>
+						<li>使用赋值</li>
+						<li>使用控制结构，如if-else、loops、break/continue etc</li>
+					</ul>
+					<p>
+						可以理解为冯·诺依曼计算机的指令序列
+					</p>
+				</section>
+
+				<section data-background="img/blackboard.jpg">
+					<section data-background="img/blackboard.jpg">
+						<h2>命令式编程和计算机</h2>
+						<p>命令式编程是对计算机指令的建模：</p>
+						<ul>
+							<li>可变变量 ≈ 内存单元</li>
+							<li>变量使用 ≈ load指令</li>
+							<li>变量赋值 ≈ store指令</li>
+							<li>控制结构 ≈ 跳转</li>
+						</ul>
+					</section>
+					<section data-background="img/blackboard.jpg">
+						<h2>命令式编程和计算机</h2>
+						<p>难题是"扩展"：怎样避免一个指令一个指令地构建程序。</p>
+						<p>John Backus, Can Programming Be Liberated from the  von. Neumann Style?, Turing Award Lecture 1978.</p>
+     				</section>
+				</section>
+
+				<section data-background="img/blackboard.jpg">
+					<section data-background="img/blackboard.jpg">
+						<h2>扩展语言</h2>
+						<p>纯命令式编程会存在 “冯.诺依曼”瓶颈：</p>
+						<blockquote> 逐个指令地构建程序 </blockquote>
+						<blockquote>
+							One tends to conceptualize data structures word-by-word
+						</blockquote>
+						<p>我们需要其他的技术来定义高级抽象概念，如集合、多项式、几何形状、字符串、文档</p>
+						<p>理想状态：发展出集合、多项式、几何形状等抽象概念的理论</p>
+					</section>
+
+					<section data-background="img/blackboard.jpg">
+						<h2>扩展语言：理论</h2>
+						<p>理论由以下部分组成：</p>
+						<ul>
+							<li>一个或多个数据类型 </li>
+							<li>在这些类型上的操作 </li>
+							<li>描述值和操作之间的定律</li>
+						</ul>
+						<p>通常理论很难描述“可变性”</p>
+					</section>
+
+					<section data-background="img/blackboard.jpg">
+						<h2>扩展语言</h2>
+						<p>例如多项式相加有下面的定律：</p>
+
+						$(a*x + b) + (c*x + d) = (a+c)*x + (b+d)$
+					
+						<p>但是它没有定义怎样在改变一个系数的前提下保持多项式不变</p>
+					</section>
+
+					<section data-background="img/blackboard.jpg">
+						<h2>扩展语言</h2>
+						<p>又例如理论上 string类型的连接操作 ++ 具有结合性:
+						
+						$(a ++ b) ++ c = a ++ (b ++ c)$
+						
+						<p>但是它没有定义怎样在改变序列的一个元素[即string中的char]的前提下保持序列不变</p>
+					</section>
+
+					<section data-background="img/blackboard.jpg">
+						<h2>扩展语言</h2>
+						<p>解决方法：</p>
+						<ul>
+							<li>集中精力为操作定义理论</li>
+							<li>最小化可变状态</li>
+							<li>函数化操作，使之能够组合扩展</li>
+						</ul>
+					</section>
+				</section>
+
+				<section data-background="img/blackboard.jpg">
+					<h2>函数式编程</h2>
+					<h3>Functional Programming</h3>
+					<ul>
+						<li>狭义地讲，函数式编程是不使用可变变量、赋值、循环及其他命令式控制结构的编程方式</li>
+						<li>广义地讲，函数式意味着聚焦在函数上</li>
+						<li>特别的，函数可以被看做值来进行生产、消费和组合</li>
+					</ul>
+				</section>
+
+				<section data-background="img/blackboard.jpg">
+					<section data-background="img/blackboard.jpg">
+						<h2>函数式语言</h2>
+						<ul>
+							<li>狭义地讲，函数式语言是不使用可变变量、赋值、循环及其他命令式控制结构的编程语言</li>
+							<li>广义地讲，函数式语言意味着能以优雅的方式写出聚焦在函数上的代码</li>
+							<li>特别地，函数在函数式语言中是一等公民。可以被作为生产、消费和组合的值
+								<ul>
+								<li>它们可以在任何地方被定义，包括在其他函数中</li>
+								<li>它们可以像其他值一样，被作为参数或返回值</li>
+								<li>它们可以像其它值一样，有一系列操作来组合函数</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+					<section data-background="img/blackboard.jpg">
+						<h2>函数式语言历史</h2>
+						<ul>
+							<li>1959 Lisp</li>
+							<li>1975-77 ML, FP, Scheme</li>
+							<li>1978 Smalltalk</li>
+							<li>1986 Standard ML</li>
+							<li>1990 Haskell, Erlang</li>
+							<li>1999 XSLT</li>
+							<li>2000 OCaml</li>
+							<li>1975-77 ML, FP, Scheme</li>
+							<li>2003 Scala, XQuery</li>
+							<li>2005 F#</li>
+							<li>2007 Clojure</li>
+						</ul>
+					</section>
+				</section>
+				
+				<section>
+					<h2>开始编程</h2>
+					<p>有多种方式可以开始scala编程</p>
+						<ul>
+							<li>Scala REPL</li>
+							<li>Script</li>
+							<li>Application</li>
+							<li>Worksheet</li>
+						</ul>
+				</section>
+				
+				<section>
+				<section>
+					<h2>scala语法 - 变量声明</h2>
+					<p></p>
+					<pre><code data-trim>
+val again = " again" 
+
+var helloWorld = "hello" + " world" 
+
+helloWorld = helloWorld + again
+
+					</code></pre>
+				</section>
+				
+				<section>
+					<h2>scala语法 - 控制结构</h2>
+					<p>scala中一切都是表达式</p>
+					<pre><code data-trim>
+val s = if(x > 0) 0 else 1
+
+for (i <- 1 to 10)
+  println("Counting " + i)
+
+for (i <- 1 to 10; i % 2 == 0)
+  println("Counting " + i)
+
+val sum = {
+  var s = 0
+  for (i <- 1 to 100)
+    s = s + i
+  s
+}
+					</code></pre>
+				</section>
+				
+				<section>
+					<h2>scala语法 - 函数声明</h2>
+					<p></p>
+					<pre><code data-trim>
+def square(a: Int) = a * a
+
+def squareWithBlock(a: Int) = {
+    a * a
+}
+
+val squareVal = (a: Int) => a * a
+
+def addOne(f: Int => Int, arg: Int) = f(arg) + 1
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>scala语法 - 函数参数</h2>
+					<p>可以选择按名称传递</p>
+					<pre><code data-trim>
+def log(logEnable: boolean, msg: String) =
+    if (logEnable) println(msg)
+
+val MSG = "programing is running"
+
+log(msg = {MSG + 1 / 0}, logEnable = false)
+					</code></pre>
+					<p class="fragment">还支持延迟取值 msg: => String，本质上相当于def</p>
+				</section>
+				</section>
+				
+
+				<section>
+					<h2>Higher-Order Functions</h2>
+					<p>函数式语言视函数为一等公民</p>
+					<p>所以函数可以被当做值一样作为参数，或称为返回值</p>
+					<p>这种机制提供了灵活地组织程序的方式</p>
+					<p>使用其它函数为参数或返回值的，称之为高阶函数</p>
+				</section>
+
+				<section>
+					<h2>Example</h2>
+					<p>对[a b]区间求和</p>
+					<pre><code data-trim>
+if (a > b) 0 else a + sumInts(a + 1, b)
+					</code></pre>
+					<p>对[a b]区间求立方和</p>
+					<pre><code data-trim>
+def cube(x: Int): Int = x * x * x
+if (a > b) 0 else cube(a) + sumInts(a + 1, b)
+					</code></pre>
+					<p>对[a b]区间求factorial和</p>
+					<pre><code data-trim>
+if (a > b) 0 else factorial(a) + sumInts(a + 1, b)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Example</h2>
+					<p>他们其实可以抽象为一种模式：</p>
+					$\sum_{n=a}^b f(n)$
+					<p>我们可以用程序抽象出这种模式吗？</p>
+				</section>
+
+				<section>
+					<h2>Summing with Higher-Order Functions</h2>
+					<p>答案是可以：</p>
+					<pre><code data-trim>
+def sum(f: Int => Int, a: Int, b: Int): Int =
+	if (a > b) 0
+	else f(a) + sum(f, a + 1, b)
+	
+def sumInts(a: Int, b: Int) = sum(id, a, b)
+def sumCubes(a: Int, b: Int) = sum(cube, a, b)
+def sumFactorials(a: Int, b: Int) = sum(fact, a, b)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Function Types</h2>
+					<p>The type A => B is the type of a function that takes an argument of
+type A and returns a result of type B.</p>
+					<p>所以Int => Int 表示输入为Int，输出为Int的函数</p>
+				</section>
+
+				<section>
+					<h2>Anonymous Functions</h2>
+					<p>用匿名函数简写</p>
+					<pre><code data-trim>
+def sumInts(a: Int, b: Int) = sum(x => x, a, b)
+def sumCubes(a: Int, b: Int) = sum(x => x * x * x, a, b)
+def sumFactorials(a: Int, b: Int) = sum(fact, a, b)
+					</code></pre>
+					<p class="fragment">注意到参数a、b不变的传给了sum，能不能去掉这些参数，进一步简化呢？</p>
+				</section>
+
+				<section>
+					<h2>Functions Returning Functions</h2>
+					<p>首先重写函数</p>
+					<pre><code data-trim>
+def sum(f: Int => Int): (Int, Int) => Int = {
+  def sumF(a: Int, b: Int): Int =
+    if (a > b) 0
+    else f(a) + sumF(a + 1, b)
+  sumF
+}
+					</code></pre>
+					<p>sum 现在的返回值是一个函数</p>
+					<p>The returned function sumF applies the given function parameter f
+and sums the results.</p>
+				</section>
+				
+				<section>
+					<h2>Stepwise Applications</h2>
+					<p>我们现在可以这样简写函数：</p>
+					<pre><code data-trim>
+def sumInts = sum(x => x)
+def sumCubes = sum(x => x * x * x)
+def sumFactorials = sum(fact)
+
+sumCubes(1, 10) + sumFactorials(10, 20)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Multiple Parameter Lists</h2>
+					<p>由于返回函数的函数，这样的写法非常常见，所以scala提供了一种多参数列表的方式，来表达相同的语法.</p>
+					<p>例如，前面的函数可以这样重写：</p>
+					<pre><code data-trim>
+def sum(f: Int => Int)(a: Int, b: Int): Int =
+	if (a > b) 0 else f(a) + sum(f)(a + 1, b)
+					</code></pre>
+				</section>
+
+				<section data-background="img/blackboard.jpg">
+					<h2>冰山一角</h2>
+					<p>其它特性</p>
+					<ul>
+						<li>trait</li>
+						<li>case class and pattern matching</li>
+						<li>collection</li>
+						<li>for comprehensive</li>
+						<li>implicit conversion ...</li>
+					</ul>
+					<p>实际应用</p>
+					<ul>
+						<li>Spark</li>
+						<li>Play framework, Spray</li>
+						<li>Akka</li>
+					</ul>
+				</section>
+				
+				<section data-background="img/blackboard.jpg">
+					<h2>推荐阅读</h2>
+					<ul>
+						<li><a href="http://zh.scala-tour.com/#/">scala 指南</li>
+						<li>Programming in Scala. Martin Odersky, Lex Spoon, and Bill
+Venners. 2nd edition. Artima 2010.</li>
+						<li><a href="http://typesafe.com/resources/free-books">Scala for the Impatient</a> </li>
+					</ul>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/math/math.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
