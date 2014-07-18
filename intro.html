@@ -111,25 +111,6 @@
 							<li>在这些类型上的操作 </li>
 							<li>描述值和操作之间的定律</li>
 						</ul>
-						<p>通常理论很难描述“可变性”</p>
-					</section>
-
-					<section data-background="img/blackboard.jpg">
-						<h2>扩展语言</h2>
-						<p>例如多项式相加有下面的定律：</p>
-
-						$(a*x + b) + (c*x + d) = (a+c)*x + (b+d)$
-					
-						<p>但是它没有定义怎样在改变一个系数的前提下保持多项式不变</p>
-					</section>
-
-					<section data-background="img/blackboard.jpg">
-						<h2>扩展语言</h2>
-						<p>又例如理论上 string类型的连接操作 ++ 具有结合性:
-						
-						$(a ++ b) ++ c = a ++ (b ++ c)$
-						
-						<p>但是它没有定义怎样在改变序列的一个元素[即string中的char]的前提下保持序列不变</p>
 					</section>
 
 					<section data-background="img/blackboard.jpg">
@@ -187,7 +168,7 @@
 					</section>
 				</section>
 				
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>开始编程</h2>
 					<p>有多种方式可以开始scala编程</p>
 						<ul>
@@ -198,8 +179,8 @@
 						</ul>
 				</section>
 				
-				<section>
-				<section>
+				<section data-background="img/blackboard.jpg">
+				<section data-background="img/blackboard.jpg">
 					<h2>scala语法 - 变量声明</h2>
 					<p></p>
 					<pre><code data-trim>
@@ -212,7 +193,7 @@ helloWorld = helloWorld + again
 					</code></pre>
 				</section>
 				
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>scala语法 - 控制结构</h2>
 					<p>scala中一切都是表达式</p>
 					<pre><code data-trim>
@@ -233,7 +214,7 @@ val sum = {
 					</code></pre>
 				</section>
 				
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>scala语法 - 函数声明</h2>
 					<p></p>
 					<pre><code data-trim>
@@ -249,7 +230,7 @@ def addOne(f: Int => Int, arg: Int) = f(arg) + 1
 					</code></pre>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>scala语法 - 函数参数</h2>
 					<p>可以选择按名称传递</p>
 					<pre><code data-trim>
@@ -265,7 +246,7 @@ log(msg = {MSG + 1 / 0}, logEnable = false)
 				</section>
 				
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Higher-Order Functions</h2>
 					<p>函数式语言视函数为一等公民</p>
 					<p>所以函数可以被当做值一样作为参数，或称为返回值</p>
@@ -273,7 +254,7 @@ log(msg = {MSG + 1 / 0}, logEnable = false)
 					<p>使用其它函数为参数或返回值的，称之为高阶函数</p>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Example</h2>
 					<p>对[a b]区间求和</p>
 					<pre><code data-trim>
@@ -290,14 +271,14 @@ if (a > b) 0 else factorial(a) + sumInts(a + 1, b)
 					</code></pre>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Example</h2>
 					<p>他们其实可以抽象为一种模式：</p>
 					$\sum_{n=a}^b f(n)$
 					<p>我们可以用程序抽象出这种模式吗？</p>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Summing with Higher-Order Functions</h2>
 					<p>答案是可以：</p>
 					<pre><code data-trim>
@@ -311,14 +292,14 @@ def sumFactorials(a: Int, b: Int) = sum(fact, a, b)
 					</code></pre>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Function Types</h2>
 					<p>The type A => B is the type of a function that takes an argument of
 type A and returns a result of type B.</p>
 					<p>所以Int => Int 表示输入为Int，输出为Int的函数</p>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Anonymous Functions</h2>
 					<p>用匿名函数简写</p>
 					<pre><code data-trim>
@@ -329,7 +310,7 @@ def sumFactorials(a: Int, b: Int) = sum(fact, a, b)
 					<p class="fragment">注意到参数a、b不变的传给了sum，能不能去掉这些参数，进一步简化呢？</p>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Functions Returning Functions</h2>
 					<p>首先重写函数</p>
 					<pre><code data-trim>
@@ -345,7 +326,7 @@ def sum(f: Int => Int): (Int, Int) => Int = {
 and sums the results.</p>
 				</section>
 				
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Stepwise Applications</h2>
 					<p>我们现在可以这样简写函数：</p>
 					<pre><code data-trim>
@@ -357,7 +338,7 @@ sumCubes(1, 10) + sumFactorials(10, 20)
 					</code></pre>
 				</section>
 
-				<section>
+				<section data-background="img/blackboard.jpg">
 					<h2>Multiple Parameter Lists</h2>
 					<p>由于返回函数的函数，这样的写法非常常见，所以scala提供了一种多参数列表的方式，来表达相同的语法.</p>
 					<p>例如，前面的函数可以这样重写：</p>
@@ -366,6 +347,56 @@ def sum(f: Int => Int)(a: Int, b: Int): Int =
 	if (a > b) 0 else f(a) + sum(f)(a + 1, b)
 					</code></pre>
 				</section>
+
+				<section data-background="img/blackboard.jpg">
+				<section data-background="img/blackboard.jpg">
+					<h2>集合上的函数式 java</h2>
+					<p>将一些字符串转为数字，并且取大于1的数，求加和</p>
+					<pre><code data-trim>
+    String[] strs = new String[]{"1", "2", "3"};
+    List<String> stringList = Arrays.asList(strs);
+
+    int total = 0;
+    for (String str : stringList) {
+      int v = Integer.parseInt(str);
+      if (v > 1) {
+        total += v;
+      }
+    }
+		
+    System.out.println(total);
+    assert (total == 5);
+					</code></pre>
+				</section>
+				
+				<section data-background="img/blackboard.jpg">
+					<h2>集合上的函数式 scala</h2>
+					<p>将一些字符串转为数字，并且取大于1的数，求加和</p>
+					<pre><code data-trim>
+val stringList = Seq("1", "2", "3")
+val intList = stringList map { string => string.toInt }
+val bigIntList = intList filter { int => int > 1 }
+val total = bigIntList reduce { (a, b) => a + b }
+total should be (5)
+					</code></pre>
+				</section>
+
+				<section data-background="img/blackboard.jpg">
+					<h2>集合上的函数式 scala one-liner</h2>
+					<p>将一些字符串转为数字，并且取大于1的数，求加和</p>
+					<pre><code data-trim>
+val stringList = Seq("1", "2", "3")
+
+val total = stringList
+  .map(_.toInt)
+  .filter(_ > 1)
+  .reduce(_ + _)
+
+total should be (5)
+					</code></pre>
+				</section>
+				</section>
+
 
 				<section data-background="img/blackboard.jpg">
 					<h2>冰山一角</h2>
@@ -379,9 +410,9 @@ def sum(f: Int => Int)(a: Int, b: Int): Int =
 					</ul>
 					<p>实际应用</p>
 					<ul>
+						<li>Akka</li>
 						<li>Spark</li>
 						<li>Play framework, Spray</li>
-						<li>Akka</li>
 					</ul>
 				</section>
 				

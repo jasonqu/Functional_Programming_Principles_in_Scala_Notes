@@ -16,3 +16,18 @@ http://www.getdisruptiv.com/services/
 
 
 http://my.oschina.net/dongming/blog/49731
+
+https://class.coursera.org/progfun-004/lecture
+https://class.coursera.org/progfun-003
+http://v2.bootcss.com/base-css.html#tables
+http://www.bootcss.com/
+
+
+latex
+
+* http://blog.163.com/goldman2000@126/blog/static/167296895201221242646561/
+* http://docs.mathjax.org/en/latest/start.html
+* http://www.mathjax.org/demos/tex-samples/
+* http://www.latex-project.org/
+
+
